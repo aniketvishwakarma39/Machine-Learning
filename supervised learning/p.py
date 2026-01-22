@@ -31,7 +31,7 @@ p_hours=model.predict([[10]])
 print(p_hours)
 
 plt.scatter(x, y, label="Actual Data")
-#plt.plot(x, model.predict(x), label="Regression Line")
+plt.plot(x, model.predict(x), label="Regression Line")
 plt.xlabel("Study Hours")
 plt.ylabel("Marks")
 plt.title("Linear Regression (Hours vs Marks)")
