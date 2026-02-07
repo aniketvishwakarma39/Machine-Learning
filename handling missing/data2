@@ -1,0 +1,28 @@
+from sklearn.impute import SimpleImputer
+import pandas as pd
+
+data2 = {
+    "Experience": [1, 2, 3, 5, None, 10, 15, 20],
+    "Income":     [25000, 28000, None, 45000, 30000, 80000, None, 500000],
+    "Department": ["IT", "HR", None, "Finance", "HR", "IT", "Finance", "IT"],
+    "Rating":     [3, 4, 5, None, 3, 5, 4, 5]
+}
+
+df= pd.DataFrame(data2)
+print(df.isnull().sum())
+
+n_col=df.select_dtypes(include=["int64","float64"])
+c_col=df.select_dtypes(include=["object"])
+
+imputer=SimpleImputer(strategy='median')
+imputed_N=imputer.fit_transform(n_col)
+
+n_col=pd.DataFrame(imputed_N,columns=n_col.columns)
+
+
+imputer2=SimpleImputer(strategy='most_frequent')
+imputeed_C=imputer2.fit_transform(c_col)
+c_col=pd.DataFrame(imputeed_C, columns=c_col.columns)
+
+new=pd.concat([n_col,c_col] ,axis=1)
+print(new)
