@@ -1,0 +1,32 @@
+import pandas as pd 
+import numpy as np
+from sklearn.impute import SimpleImputer
+
+data = {
+    "Age":    [20, 22, None, 25, 23, None, 30, 21],
+    "Salary": [25000, 30000, 28000, None, 26000, 32000, 1000000, 27000],
+    "Gender": ["Male", "Female", "Female", "Male", None, "Male", "Male", "Female"],
+    "City":   ["Delhi", "Mumbai", "Delhi", "Bangalore", "Mumbai", "Delhi", "Delhi", None],
+    "Marks":  [78, 85, 90, 72, None, 88, 95, 80]
+}
+
+df=pd.DataFrame(data)
+dt=df.isnull().sum()
+print(dt)
+
+
+n_cols=df.select_dtypes(include=["float64","int64"])
+c_cols=df.select_dtypes(include=["object"])
+
+impute=SimpleImputer(strategy='mean')
+imputed_data=impute.fit_transform(n_cols)
+
+n_cols=pd.DataFrame(imputed_data,columns=n_cols.columns)
+
+imputed=SimpleImputer(strategy='most_frequent')
+cat_col=imputed.fit_transform(c_cols)
+
+c_cols=pd.DataFrame(cat_col, columns=c_cols.columns)
+
+new=pd.concat([n_cols,c_cols],axis=1)
+print(new)
