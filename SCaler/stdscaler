@@ -1,0 +1,36 @@
+import pandas as pd 
+import numpy as np 
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import RobustScaler
+from sklearn.metrics import accuracy_score
+
+data=pd.DataFrame({
+      "Age": [22, 25, np.nan, 28, 35, 40, np.nan, 30],
+    "Salary": [25000, 30000, 35000, np.nan, 1000000, 45000, 38000, np.nan],
+    "Purchased": [0, 0, 1, 0, 1, 1, 0, 1]
+
+})
+
+x=data.drop("Purchased", axis=1)
+y=data["Purchased"]
+
+
+x_train, x_test, y_train, y_test=train_test_split(x,y, test_size=0.25, random_state=42)
+
+imputer= SimpleImputer(strategy="median")
+x_train_imputer=imputer.fit_transform(x_train)
+x_test_imputer= imputer.fit_transform(x_test)
+
+sc=RobustScaler()
+x_scale=sc.fit_transform(x_train_imputer)
+x_scaled=sc.fit_transform(x_test_imputer)
+
+model=LogisticRegression()
+model.fit(x_scale,y_train)
+
+y_pred= model.predict(x_scaled)
+accuracy= accuracy_score(y_test,y_pred)
+
+print(accuracy)
