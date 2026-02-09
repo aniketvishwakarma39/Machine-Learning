@@ -1,0 +1,26 @@
+import pandas as pd 
+import numpy as np 
+from sklearn.impute import SimpleImputer 
+from sklearn.preprocessing import RobustScaler
+from sklearn.pipeline import Pipeline
+
+data = pd.DataFrame({
+    "Age": [19, 25, 30, 40, np.nan, 60, 70],
+    "BMI": [18.5, 22.0, 27.5, 30.0, 25.0, np.nan, 35.0],
+    "Cost": [2000, 4000, 7000, 12000, 8000, 20000, 30000]
+})
+x= data.drop("Cost", axis=1)
+y= data["Cost"]
+
+pipe=Pipeline([
+    ("impute",SimpleImputer(strategy="median")),
+    ("scale", RobustScaler())
+])
+
+x_n=pipe.fit_transform(x)
+
+x_n=pd.DataFrame(x_n, columns=x.columns)
+
+new= pd.concat([x_n, y.reset_index(drop=True)], axis=1)
+
+print(new)
