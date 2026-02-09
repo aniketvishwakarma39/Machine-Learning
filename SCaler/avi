@@ -1,0 +1,29 @@
+import pandas as pd 
+import numpy as np 
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import RobustScaler
+
+data2 = pd.DataFrame({
+    "StudyHours": [1, 2, 3, 4, np.nan, 6, 8],
+    "SleepHours": [5, 6, 7, np.nan, 8, 6, 4],
+    "marks": [35, 45, 55, 60, 65, 75, 90]
+})
+
+print(data2.isnull().sum())
+x=data2.drop("marks", axis=1)
+y=data2["marks"]
+imputation=SimpleImputer(strategy="median")
+sc=imputation.fit_transform(x)
+
+a1=pd.DataFrame(sc,columns=x.columns)
+
+
+scaler=RobustScaler()
+sc1=scaler.fit_transform(sc)
+
+a2=pd.DataFrame(sc1,columns=x.columns)
+
+
+new=pd.concat([a2, y.reset_index(drop=True)], axis=1)
+
+print(new)
