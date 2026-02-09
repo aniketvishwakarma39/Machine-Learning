@@ -1,0 +1,26 @@
+import pandas as pd 
+import numpy as np 
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import RobustScaler
+from sklearn.pipeline import Pipeline
+
+data = pd.DataFrame({
+    "Income": [20000, 30000, 40000, np.nan, 50000, 1200000, 45000],
+    "LoanAmount": [5000, 10000, 15000, 20000, np.nan, 50000, 18000],
+    "Approved": [0, 0, 1, 1, 1, 0, 1]
+})
+
+x=data.drop("Approved", axis=1)
+y=data["Approved"]
+
+pipe=Pipeline([
+      ("impute", SimpleImputer(strategy="mean")),
+      ("scale", RobustScaler())
+])
+
+x_p=pipe.fit_transform(x)
+
+x_trans=pd.DataFrame(x_p,columns=x.columns)
+
+new=pd.concat([x_trans, y.reset_index(drop=True)], axis=1)
+print(new)
