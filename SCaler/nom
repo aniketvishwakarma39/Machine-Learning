@@ -1,0 +1,49 @@
+import pandas as pd 
+import numpy as np 
+from sklearn.impute import SimpleImputer 
+from sklearn.preprocessing import RobustScaler , OneHotEncoder 
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+data = pd.DataFrame({
+    "Age": [22, 25, np.nan, 28, 35, 40, np.nan, 30],
+    "City": ["Delhi", "Mumbai", "Delhi", "Pune", "Mumbai", "Delhi", "Pune", "Mumbai"],
+    "Salary": [25000, 30000, 35000, np.nan, 1000000, 45000, 38000, np.nan],
+    "Purchased": [0, 0, 1, 0, 1, 1, 0, 1]
+})
+
+x=data.drop("Purchased", axis=1)
+y=data["Purchased"]
+
+x_train, x_test, y_train, y_test=train_test_split(x,y, test_size=0.25, random_state=42)
+
+n_features=x.select_dtypes(include=["float64", "int64"]).columns
+c_features=x.select_dtypes(include=["object"]).columns
+
+new_pipe=Pipeline([
+    ("imputer", SimpleImputer(strategy="median")),
+    ("scale", RobustScaler())
+])
+
+cat_pipe=Pipeline([
+    ("encode",OneHotEncoder(sparse=False, handle_unknown="ignore" ))
+])
+
+preprocess=ColumnTransformer([
+    ("num",new_pipe, n_features),
+    ("cat", cat_pipe, c_features)
+])
+
+pipe=Pipeline([
+    ('preprocess', preprocess),
+    ("model",LogisticRegression())
+])
+
+pipe.fit(x_train, y_train)
+y_pred=pipe.predict(x_test)
+
+accuracy=accuracy_score(y_test, y_pred)*100
+print(accuracy)
