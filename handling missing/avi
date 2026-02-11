@@ -1,0 +1,33 @@
+import pandas as pd 
+import numpy as np 
+from sklearn.impute import SimpleImputer
+ 
+data = pd.DataFrame({
+    "Experience": [1, 2, 3, 5, None, 10, 15, 20],
+    "Income":     [25000, 28000, None, 45000, 30000, 80000, None, 500000],
+    "Department": ["IT", "HR", None, "Finance", "HR", "IT", "Finance", "IT"],
+    "Rating":     [3, 4, 5,6, 3, 5, 4, 5]
+})
+ 
+x= data.drop("Rating", axis=1)
+y=data["Rating"]
+ 
+n_fet=x.select_dtypes(include=["float64","int64"]).columns
+c_fet=x.select_dtypes(include=["object"]).columns
+ 
+imputer= SimpleImputer(strategy="median")
+c=x[n_fet]
+c=imputer.fit_transform(c)
+ 
+c_imp=pd.DataFrame(c, columns=n_fet)
+ 
+imputer2= SimpleImputer(strategy="most_frequent")
+n=x[c_fet]
+n=imputer2.fit_transform(n)
+ 
+n_imp=pd.DataFrame(n, columns=c_fet)
+ 
+new= pd.concat([c_imp, n_imp], axis=1)
+ 
+print(new)
+ 
