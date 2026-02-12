@@ -1,0 +1,42 @@
+import pandas as pd 
+from sklearn.impute import SimpleImputer
+
+data = pd.DataFrame({
+    "Experience": [1, 2, 3, 5, 5, 10, 15, 20],
+    "Income":     [25000, 28000, 37500, 45000, 30000, 80000, 37500, 500000],
+    "Department": ["IT", "HR", "IT", "Finance", "HR", "IT", "Finance", "IT"],
+    "Rating":     [3, 4, 5, 4, 3, 5, 4, 5]
+})
+
+'''x= data.drop("Rating", axis=1)
+y= data["Rating"]'''
+
+n_cols= data.select_dtypes(include=["float64", "int64"]).columns
+c_cols= data.select_dtypes(include=["object"]).columns
+
+impute= SimpleImputer(strategy="median")
+impute= impute.fit_transform(data[n_cols])
+
+da=pd.DataFrame(impute, columns=n_cols)
+
+impute1= SimpleImputer(strategy="most_frequent")
+Sim= impute1.fit_transform(data[c_cols])
+
+da1= pd.DataFrame(Sim, columns=c_cols)
+
+new= pd.concat([da, da1], axis=1)
+
+print(new)
+
+
+print(data.head())
+print(data.shape)
+print(data.columns)
+print(data.info())
+print(data.describe())
+
+data1 = pd.DataFrame({
+    "Experience": [1, 2, 3, 5, 5, 10, 15, 20],
+    "Income":     [25000, 28000, 37500, 45000, 30000, 80000, 37500, 500000],
+})
+print(data1.corr())
